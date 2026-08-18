@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProListIng · 离线记账计划应用</title>
+<meta name="description" content="ProListIng：完全离线的个人记账与计划应用。记账、计划、日记、运动，数据只存在你自己的手机里，绝对安全，永久免费。">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    background: linear-gradient(170deg,#FFF8E1 0%,#FDF3D0 30%,#F9E7AE 55%,#F2C94C 100%);
+    min-height: 100vh; color:#4A3A2A; overflow-x:hidden;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 20px 40px; }
+
+  /* ===== 顶部装饰 ===== */
+  .orb { position:fixed; border-radius:50%; filter: blur(60px); opacity:.5; pointer-events:none; z-index:0; }
+  .orb1 { width:300px; height:300px; background:#FFB300; top:-80px; right:-80px; }
+  .orb2 { width:220px; height:220px; background:#FFE082; bottom:60px; left:-70px; }
+
+  /* ===== Logo ===== */
+  .logo {
+    text-align:center; position:relative; z-index:1;
+  }
+  .logo .name {
+    font-family:"Brush Script MT","Segoe Script","Lucida Handwriting",cursive;
+    font-size: 56px; font-weight:bold; font-style:italic;
+    letter-spacing: 2px; color:#4A3A2A;
+    text-shadow: 0 2px 0 #fff, 0 6px 18px rgba(74,58,42,.18);
+    line-height:1.1;
+  }
+  .logo .tag {
+    display:inline-block; margin-top:10px; font-size:13px; color:#8A7355;
+    background:#fff; border:1px solid #F2C94C; border-radius:20px;
+    padding:4px 14px; letter-spacing:3px;
+  }
+
+  /* ===== Hero ===== */
+  .hero { text-align:center; margin:36px 0 8px; position:relative; z-index:1; }
+  .hero h1 { font-size:30px; font-weight:800; color:#3A2C00; line-height:1.5; }
+  .hero h1 .hl { color:#E65100; }
+  .hero p { margin-top:12px; font-size:15px; color:#6D5A2E; line-height:1.8; }
+
+  /* ===== 产品定位 ===== */
+  .position { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:28px 0; position:relative; z-index:1; }
+  .pos-card {
+    background:#fff; border-radius:18px; padding:20px 18px;
+    box-shadow: 0 8px 24px rgba(74,58,42,.10);
+    border:1px solid rgba(242,201,76,.5);
+    text-align:center;
+  }
+  .pos-card .big { font-size:26px; font-weight:900; letter-spacing:1px; }
+  .pos-card .arrow { color:#E65100; }
+  .pos-card .desc { font-size:12.5px; color:#8A7355; margin-top:8px; line-height:1.7; }
+  .pos-card .ico { font-size:30px; display:block; margin-bottom:8px; }
+  .pos-a { background:linear-gradient(135deg,#FFF 0%,#FFF8E1 100%); }
+  .pos-b { background:linear-gradient(135deg,#FFF 0%,#FFEFC7 100%); }
+
+  /* ===== 功能四卡 ===== */
+  .feat-title { text-align:center; font-size:18px; font-weight:800; margin:34px 0 16px; color:#3A2C00; position:relative; z-index:1; }
+  .feat-title::before, .feat-title::after { content:""; display:inline-block; width:26px; height:2px; background:#E2B13C; vertical-align:middle; margin:0 10px; }
+  .feats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; position:relative; z-index:1; }
+  .feat {
+    background:rgba(255,255,255,.82); border-radius:16px; padding:18px 8px; text-align:center;
+    box-shadow: 0 6px 16px rgba(74,58,42,.08); border:1px solid rgba(255,255,255,.9);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .feat:active { transform: scale(.95); }
+  .feat .f-ico { font-size:28px; }
+  .feat .f-name { font-size:14px; font-weight:700; margin-top:8px; }
+  .feat .f-sub { font-size:11px; color:#8A7355; margin-top:3px; }
+
+  /* ===== 下载区 ===== */
+  .dl-box {
+    margin: 32px 0 10px; position:relative; z-index:1;
+    background: rgba(255,255,255,.92);
+    border-radius: 22px; padding: 26px 22px;
+    box-shadow: 0 14px 40px rgba(74,58,42,.16);
+    border: 1px solid rgba(242,201,76,.7);
+  }
+  .dl-box h2 { text-align:center; font-size:20px; font-weight:800; color:#3A2C00; }
+  .dl-box .v { text-align:center; font-size:12px; color:#8A7355; margin:6px 0 16px; }
+  .dl-btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:17px 0; border:none; border-radius:16px;
+    background: linear-gradient(135deg,#FFC93C,#FFB300);
+    color:#3A2C00; font-size:18px; font-weight:800; text-decoration:none;
+    box-shadow: 0 8px 20px rgba(255,179,0,.45);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .dl-btn:active { transform: scale(.97); box-shadow: 0 4px 12px rgba(255,179,0,.3); }
+  .dl-btn .apk-ico { font-size:22px; }
+  .dl-btn small { font-size:12px; font-weight:600; opacity:.75; }
+  .tip {
+    margin-top:14px; font-size:13px; color:#6D5A2E; line-height:1.8;
+    background:#FFF6DC; border:1px dashed #E2B13C; border-radius:12px; padding:11px 14px;
+    display:none;
+  }
+  .tip b { color:#E64340; }
+  .tip .k { font-weight:700; color:#3A2C00; }
+  .link-row { display:flex; gap:12px; margin-top:14px; }
+  .link-btn {
+    flex:1; text-align:center; padding:12px 0; border-radius:12px; text-decoration:none;
+    font-size:14px; font-weight:700; border:2px solid #E2B13C; color:#4A3A2A;
+    background:#FDF8F0;
+  }
+  .link-btn:active { transform: scale(.97); }
+
+  /* ===== 安全声明 ===== */
+  .safety { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:22px; position:relative; z-index:1; }
+  .safety span {
+    font-size:12px; color:#8A7355; background:rgba(255,255,255,.7);
+    border-radius:14px; padding:5px 12px; border:1px solid rgba(226,177,60,.4);
+  }
+
+  /* ===== 页脚 ===== */
+  .footer { text-align:center; font-size:12px; color:#A89A80; margin-top:34px; line-height:1.9; position:relative; z-index:1; }
+  .footer .sig { font-family:"Brush Script MT","Segoe Script",cursive; font-style:italic; font-size:16px; color:#8A7355; }
+
+  @media (max-width: 560px) {
+    .feats { grid-template-columns: repeat(2, 1fr); }
+    .position { grid-template-columns: 1fr; }
+    .logo .name { font-size:46px; }
+  }
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="wrap">
+
+  <!-- Logo -->
+  <div class="logo">
+    <div class="name">ProListIng</div>
+    <span class="tag">记账 · 计划 · 日记 · 运动</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>一部手机<br>装下<span class="hl">全部生活</span></h1>
+    <p>完全离线 · 绝对安全 · 永久免费 · 无广告<br>数据只存在你自己的手机里，谁都拿不走</p>
+  </div>
+
+  <!-- 产品定位 -->
+  <div class="position">
+    <div class="pos-card pos-a">
+      <span class="ico">🔒</span>
+      <div class="big">离线的 <span class="arrow">→</span> 绝对安全</div>
+      <div class="desc">不联网、不上传、不留痕。你的每一笔记账、每一篇日记，只属于你一个人。</div>
+    </div>
+    <div class="pos-card pos-b">
+      <span class="ico">🧩</span>
+      <div class="big">多功能的 <span class="arrow">→</span> 记账 &amp; 计划 &amp; 日记 &amp; 运动</div>
+      <div class="desc">一个 App 装下生活：收支明细、目标计划、心情日记、运动打卡，全都要。</div>
+    </div>
+  </div>
+
+  <!-- 功能 -->
+  <div class="feat-title">四大模块</div>
+  <div class="feats">
+    <div class="feat"><div class="f-ico">📒</div><div class="f-name">记账</div><div class="f-sub">收支明细一目了然</div></div>
+    <div class="feat"><div class="f-ico">🗓</div><div class="f-name">计划</div><div class="f-sub">目标 + 攒钱 + 历史</div></div>
+    <div class="feat"><div class="f-ico">📖</div><div class="f-name">日记</div><div class="f-sub">记录每天的小事</div></div>
+    <div class="feat"><div class="f-ico">🏃</div><div class="f-name">运动</div><div class="f-sub">打卡养成好习惯</div></div>
+  </div>
+
+  <!-- 下载 -->
+  <div class="dl-box">
+    <h2>⬇ 下载安卓版</h2>
+    <div class="v">v1.0 正式版 · 约 187KB · 无需网络权限</div>
+
+    <!-- 微信提示 -->
+    <div class="tip" id="wxTip">
+      <b>⚠️ 微信内无法直接下载</b><br>
+      请点击右上角 <b>···</b> → 「<b>在浏览器打开</b>」→ 再点下方下载按钮
+    </div>
+
+    <a class="dl-btn" id="dlBtn" href="https://github.com/xiaolu-fzu/prolist-prototype/releases/download/v1.0/Prolist.apk">
+      <span class="apk-ico">📲</span> 立即下载 APK <small>v1.0</small>
+    </a>
+
+    <!-- 未知来源提示 -->
+    <div class="tip" id="srcTip">
+      <span class="k">vivo / 小米 / 华为等机型</span>：若点击下载没反应，请先到手机 <b>设置 → 安全 / 更多设置 → 允许安装未知来源应用</b>，再回来下载。
+    </div>
+
+    <div class="link-row">
+      <a class="link-btn" href="https://xiaolu-fzu.github.io/prolist-prototype/">📱 在线体验原型</a>
+      <a class="link-btn" href="https://github.com/xiaolu-fzu/prolist-prototype/releases">📦 查看版本</a>
+    </div>
+  </div>
+
+  <!-- 安全 -->
+  <div class="safety">
+    <span>🔒 完全离线</span>
+    <span>🚫 无广告</span>
+    <span>💰 永久免费</span>
+    <span>🛡 数据只在本机</span>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer">
+    <div class="sig">— 寻梅小路 · 2026.8.17 —</div>
+    ProListIng · 用一部手机装下全部生活<br>
+    <span>原型与下载页均托管于 GitHub Pages</span>
+  </div>
+</div>
+
+<script>
+  // 微信内置浏览器检测 → 显示引导
+  var ua = navigator.userAgent.toLowerCase();
+  var isWechat = ua.indexOf('micromessenger') > -1;
+  if (isWechat) document.getElementById('wxTip').style.display = 'block';
+
+  // 安卓检测未知来源提示（点击下载时提示）
+  var isAndroid = /android/i.test(ua);
+  document.getElementById('dlBtn').addEventListener('click', function(){
+    var t = document.getElementById('srcTip');
+    if (isAndroid) t.style.display = 'block';
+  });
+</script>
+</body>
+</html>
